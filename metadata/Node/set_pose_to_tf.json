@@ -1,0 +1,35 @@
+{
+    "Node": {
+        "set_pose_to_tf": {
+            "Info": "",
+            "Label": "set_pose_to_tf",
+            "LastUpdate": {
+                "date": "11/06/2026 at 15:51:06",
+                "user": "movai@internal"
+            },
+            "Launch": true,
+            "PackageDepends": "",
+            "Path": "",
+            "Persistent": false,
+            "PortsInst": {
+                "set_pose": {
+                    "In": {
+                        "in": {
+                            "Callback": "set_pose_to_tf",
+                            "Message": "geometry_msgs/PoseWithCovarianceStamped"
+                        }
+                    },
+                    "Info": "",
+                    "Message": "PoseWithCovarianceStamped",
+                    "Package": "geometry_msgs",
+                    "Template": "ROS1/Subscriber"
+                }
+            },
+            "Remappable": true,
+            "Type": "MovAI/Node",
+            "User": "",
+            "Version": "",
+            "VersionDelta": {}
+        }
+    }
+}
