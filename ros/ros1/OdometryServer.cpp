@@ -57,6 +57,7 @@ OdometryServer::OdometryServer(const ros::NodeHandle &nh, const ros::NodeHandle 
     pnh_.param("odom_frame", odom_frame_, odom_frame_);
     pnh_.param("publish_odom_tf", publish_odom_tf_, false);
     pnh_.param("visualize", publish_debug_clouds_, publish_debug_clouds_);
+    pnh_.param("start_odom0", start_odom0_, true);
     pnh_.param("max_range", config_.max_range, config_.max_range);
     pnh_.param("min_range", config_.min_range, config_.min_range);
     pnh_.param("deskew", config_.deskew, config_.deskew);
@@ -163,6 +164,13 @@ void OdometryServer::RegisterFrame(const sensor_msgs::PointCloud2::ConstPtr &msg
 
     // Compute the pose using GenZ, ego-centric to the LiDAR
     const Sophus::SE3d genz_pose = odometry_.poses().back();
+
+    // Set initial pose offset from first frame if start_odom0 is enabled
+    if (start_odom0_ && !first_frame_processed_) {
+        initial_pose_offset_ = genz_pose.inverse();
+        first_frame_processed_ = true;
+        ROS_INFO("start_odom0 enabled: Odometry initialized to start at zero");
+    }
 
     // If necessary, transform the ego-centric pose to the specified base_link/base_footprint frame
     const auto pose = [&]() -> Sophus::SE3d {
