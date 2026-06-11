@@ -1,3 +1,1 @@
 Node:genz_icp_odometry_node
-Node:set_pose_to_tf
-Callback:set_pose_to_tf
