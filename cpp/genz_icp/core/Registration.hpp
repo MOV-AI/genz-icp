@@ -43,6 +43,6 @@ struct Registration {
 
     int max_num_iterations_;
     double convergence_criterion_;
-    bool terminal_status_enabled_ = true;
+    bool terminal_status_enabled_ = false;
 };
 }  // namespace genz_icp

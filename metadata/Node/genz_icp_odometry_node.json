@@ -1,0 +1,117 @@
+{
+    "Node": {
+        "genz_icp_odometry_node": {
+            "Info": "A LiDAR odometry pipeline that just works. More here: https://github.com/PRBonn/kiss-icp/tree/v0.3.0",
+            "Label": "genz_icp_odometry_node",
+            "LastUpdate": {
+                "date": "11/06/2026 at 16:23:27",
+                "user": "movai@internal"
+            },
+            "Launch": true,
+            "PackageDepends": "",
+            "Parameter": {
+                "convergence_criterion": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "0.0001"
+                },
+                "desired_num_voxelized_points": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "2000"
+                },
+                "deskew": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "False"
+                },
+                "initial_threshold": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "2.0"
+                },
+                "map_cleanup_radius": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "100"
+                },
+                "max_num_iterations": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "100"
+                },
+                "max_points_per_voxel": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "1"
+                },
+                "max_range": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "100"
+                },
+                "min_motion_th": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "0.1"
+                },
+                "min_range": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "5.0"
+                },
+                "planarity_threshold": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "0.2"
+                },
+                "publish_odom_tf": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "False"
+                },
+                "voxel_size": {
+                    "Description": "",
+                    "Type": "any",
+                    "Value": "0.3"
+                }
+            },
+            "Path": "/genz_icp/odometry_node",
+            "Persistent": false,
+            "PortsInst": {
+                "genz/odometry": {
+                    "Info": "",
+                    "Message": "Odometry",
+                    "Out": {
+                        "out": {
+                            "Message": "nav_msgs/Odometry",
+                            "Parameter": {
+                                "latch": false,
+                                "queue_size": 1
+                            }
+                        }
+                    },
+                    "Package": "nav_msgs",
+                    "Template": "ROS1/Publisher"
+                },
+                "pointcloud_topic": {
+                    "In": {
+                        "in": {
+                            "Callback": "place_holder",
+                            "Message": "sensor_msgs/PointCloud2"
+                        }
+                    },
+                    "Info": "",
+                    "Message": "PointCloud2",
+                    "Package": "sensor_msgs",
+                    "Template": "ROS1/Subscriber"
+                }
+            },
+            "Remappable": true,
+            "Type": "ROS1/Node",
+            "User": "",
+            "Version": "",
+            "VersionDelta": {}
+        }
+    }
+}
