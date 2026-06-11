@@ -27,6 +27,7 @@
 
 // ROS
 #include <nav_msgs/Path.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <tf2_ros/buffer.h>
@@ -45,6 +46,9 @@ public:
 private:
     /// Register new frame
     void RegisterFrame(const sensor_msgs::PointCloud2::ConstPtr &msg);
+
+    /// Callback to set initial pose from topic
+    void InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg);
 
     /// Stream the estimated pose to ROS
     void PublishOdometry(const Sophus::SE3d &pose,
@@ -75,6 +79,7 @@ private:
 
     /// Data subscribers.
     ros::Subscriber pointcloud_sub_;
+    ros::Subscriber initial_pose_sub_;
 
     /// Data publishers.
     ros::Publisher odom_publisher_;
@@ -91,6 +96,9 @@ private:
     /// Global/map coordinate frame.
     std::string odom_frame_{"odom"};
     std::string base_frame_{};
+
+    /// Initial pose offset
+    Sophus::SE3d initial_pose_offset_{Sophus::SE3d()};
 };
 
 }  // namespace genz_icp_ros
