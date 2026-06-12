@@ -99,7 +99,6 @@ private:
 
     /// Initial pose offset
     Sophus::SE3d initial_pose_offset_{Sophus::SE3d()};
-    bool start_odom0_{true};
     bool first_frame_processed_{false};
 };
 

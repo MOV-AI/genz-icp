@@ -4,7 +4,7 @@
             "Info": "",
             "Label": "set_pose_to_tf",
             "LastUpdate": {
-                "date": "12/06/2026 at 15:00:27",
+                "date": "12/06/2026 at 17:01:19",
                 "user": "movai@internal"
             },
             "Launch": true,
@@ -23,21 +23,6 @@
                     "Message": "PoseWithCovarianceStamped",
                     "Package": "geometry_msgs",
                     "Template": "ROS1/Subscriber"
-                },
-                "set_pose_pub": {
-                    "Info": "",
-                    "Message": "PoseWithCovarianceStamped",
-                    "Out": {
-                        "out": {
-                            "Message": "geometry_msgs/PoseWithCovarianceStamped",
-                            "Parameter": {
-                                "latch": false,
-                                "queue_size": 1
-                            }
-                        }
-                    },
-                    "Package": "geometry_msgs",
-                    "Template": "ROS1/Publisher"
                 }
             },
             "Remappable": true,

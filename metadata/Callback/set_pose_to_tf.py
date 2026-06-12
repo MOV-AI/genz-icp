@@ -1,4 +1,4 @@
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, PoseWithCovarianceStamped
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 import rospy
 import sys
@@ -9,7 +9,7 @@ stat_br = StaticTransformBroadcaster()
 t = TransformStamped()
 t.header.stamp = rospy.Time.now()
 t.header.frame_id = "map"
-t.child_frame_id = "odom"
+t.child_frame_id = "odom0"
 
 # Translation
 t.transform.translation = msg.pose.pose.position
@@ -26,7 +26,3 @@ t.transform.rotation.w = orientation_q_new[3]
 
 # Send
 stat_br.sendTransform(t)
-# Wait for a bit?
-time.sleep(1)
-# Send to set_pose_pub
-gd.oport['set_pose_pub'].send(msg)

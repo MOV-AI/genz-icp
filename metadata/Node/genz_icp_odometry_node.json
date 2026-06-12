@@ -4,7 +4,7 @@
             "Info": "A LiDAR odometry pipeline that just works. More here: https://github.com/PRBonn/kiss-icp/tree/v0.3.0",
             "Label": "genz_icp_odometry_node",
             "LastUpdate": {
-                "date": "11/06/2026 at 19:55:33",
+                "date": "12/06/2026 at 16:55:55",
                 "user": "movai@internal"
             },
             "Launch": true,
@@ -68,7 +68,7 @@
                 "odom_frame": {
                     "Description": "",
                     "Type": "any",
-                    "Value": "odom"
+                    "Value": "odom0"
                 },
                 "planarity_threshold": {
                     "Description": "",
@@ -79,11 +79,6 @@
                     "Description": "",
                     "Type": "any",
                     "Value": "False"
-                },
-                "start_odom0": {
-                    "Description": "",
-                    "Type": "any",
-                    "Value": "True"
                 },
                 "voxel_size": {
                     "Description": "",
@@ -108,18 +103,6 @@
                     },
                     "Package": "nav_msgs",
                     "Template": "ROS1/Publisher"
-                },
-                "initialpose": {
-                    "In": {
-                        "in": {
-                            "Callback": "place_holder",
-                            "Message": "geometry_msgs/PoseWithCovarianceStamped"
-                        }
-                    },
-                    "Info": "",
-                    "Message": "PoseWithCovarianceStamped",
-                    "Package": "geometry_msgs",
-                    "Template": "ROS1/Subscriber"
                 },
                 "pointcloud_topic": {
                     "In": {

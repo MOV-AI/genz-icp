@@ -57,7 +57,6 @@ OdometryServer::OdometryServer(const ros::NodeHandle &nh, const ros::NodeHandle 
     pnh_.param("odom_frame", odom_frame_, odom_frame_);
     pnh_.param("publish_odom_tf", publish_odom_tf_, false);
     pnh_.param("visualize", publish_debug_clouds_, publish_debug_clouds_);
-    pnh_.param("start_odom0", start_odom0_, true);
     pnh_.param("max_range", config_.max_range, config_.max_range);
     pnh_.param("min_range", config_.min_range, config_.min_range);
     pnh_.param("deskew", config_.deskew, config_.deskew);
@@ -81,9 +80,6 @@ OdometryServer::OdometryServer(const ros::NodeHandle &nh, const ros::NodeHandle 
     // Initialize subscribers
     pointcloud_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("pointcloud_topic", queue_size_,
                                                               &OdometryServer::RegisterFrame, this);
-    initial_pose_sub_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>(
-        "/initialpose", 1, &OdometryServer::InitialPoseCallback, this);
-
     // Initialize publishers
     odom_publisher_ = pnh_.advertise<nav_msgs::Odometry>("/genz/odometry", queue_size_);
     traj_publisher_ = pnh_.advertise<nav_msgs::Path>("/genz/trajectory", queue_size_);
@@ -118,38 +114,6 @@ Sophus::SE3d OdometryServer::LookupTransform(const std::string &target_frame,
     return {};
 }
 
-void OdometryServer::InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg) {
-    // Extract position
-    Eigen::Vector3d translation(
-        msg->pose.pose.position.x,
-        msg->pose.pose.position.y,
-        msg->pose.pose.position.z
-    );
-
-    // Extract orientation quaternion
-    Eigen::Quaterniond quat(
-        msg->pose.pose.orientation.w,
-        msg->pose.pose.orientation.x,
-        msg->pose.pose.orientation.y,
-        msg->pose.pose.orientation.z
-    );
-
-    // Create SE3 transform from quaternion and translation
-    Sophus::SO3d rotation(quat);
-    initial_pose_offset_ = Sophus::SE3d(rotation, translation);
-
-    // Get Euler angles for logging
-    Eigen::Vector3d euler = quat.toRotationMatrix().eulerAngles(2, 1, 0); // ZYX order (yaw, pitch, roll)
-
-    ROS_INFO("Initial pose set to: x=%.3f, y=%.3f, z=%.3f, roll=%.3f, pitch=%.3f, yaw=%.3f",
-             translation.x(), translation.y(), translation.z(),
-             euler(2), euler(1), euler(0));
-
-    // Unsubscribe after receiving the first message
-    initial_pose_sub_.shutdown();
-    ROS_INFO("Initial pose received. Unsubscribed from /initialpose topic.");
-}
-
 void OdometryServer::RegisterFrame(const sensor_msgs::PointCloud2::ConstPtr &msg) {
     const auto cloud_frame_id = msg->header.frame_id;
     const auto points = PointCloud2ToEigen(msg);
@@ -165,13 +129,6 @@ void OdometryServer::RegisterFrame(const sensor_msgs::PointCloud2::ConstPtr &msg
     // Compute the pose using GenZ, ego-centric to the LiDAR
     const Sophus::SE3d genz_pose = odometry_.poses().back();
 
-    // Set initial pose offset from first frame if start_odom0 is enabled
-    if (start_odom0_ && !first_frame_processed_) {
-        initial_pose_offset_ = genz_pose.inverse();
-        first_frame_processed_ = true;
-        ROS_INFO("start_odom0 enabled: Odometry initialized to start at zero");
-    }
-
     // If necessary, transform the ego-centric pose to the specified base_link/base_footprint frame
     const auto pose = [&]() -> Sophus::SE3d {
         if (egocentric_estimation) return genz_pose;
@@ -179,11 +136,8 @@ void OdometryServer::RegisterFrame(const sensor_msgs::PointCloud2::ConstPtr &msg
         return cloud2base * genz_pose * cloud2base.inverse();
     }();
 
-    // Apply initial pose offset
-    const auto pose_with_offset = initial_pose_offset_ * pose;
-
     // Spit the current estimated pose to ROS msgs
-    PublishOdometry(pose_with_offset, msg->header.stamp, cloud_frame_id);
+    PublishOdometry(pose, msg->header.stamp, cloud_frame_id);
 
     // Publishing this clouds is a bit costly, so do it only if we are debugging
     if (publish_debug_clouds_) {
